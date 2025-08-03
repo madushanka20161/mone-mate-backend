@@ -22,7 +22,10 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-express": "^11.1.5",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -67,5 +70,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "main": "dist/main.js",
+  "engines": {
+    "node": "22"
   }
 }
