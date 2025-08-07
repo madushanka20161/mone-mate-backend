@@ -96,3 +96,25 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+<<<<<<< HEAD
+=======
+
+
+
+
+
+# firebase function
+- pasanmalinda
+- mone-manager
+# mongodb
+- pasanmalinda
+
+## maintain config
+- dev environment (use .env file)
+- firebase env (use firebase config)
+  ```
+  firebase functions:config:get // to see all config
+  firebase functions:config:set auth.google_client_id="prod-google-client-id" // to set config
+  firebase functions:config:unset  auth.google_client_id  // to remove config
+  ```
+>>>>>>> 42e7c52 (login user route)
