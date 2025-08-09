@@ -6,11 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Constant } from './core/const';
 
 @Module({
-  imports: [
-    MongooseModule.forRoot(Constant.mongodbURL),
-    UserModule
-  ],
-  
+  imports: [MongooseModule.forRoot(Constant.mongodbURL), UserModule],
+
   controllers: [AppController],
   providers: [AppService],
 })

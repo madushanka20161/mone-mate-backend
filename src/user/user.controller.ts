@@ -23,7 +23,7 @@ export class UserController {
     if (request === undefined) throw new BadRequestException('');
 
     try {
-      if (request.authType === AuthType.GOOGLE as string) {
+      if (request.authType === (AuthType.GOOGLE as string)) {
         return await this.userService.signUpWithGoogle(request);
       } else {
         throw new GeneralExeption(`invalid auth type ${request.authType}`);

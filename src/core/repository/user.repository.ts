@@ -1,15 +1,15 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { Model } from "mongoose";
-import { User, UserInterface } from "../dto/user.dto";
-import { UserDocument } from "../schemas/user.schema";
-import { InjectModel } from "@nestjs/mongoose";
+import { Injectable, Logger } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { User, UserInterface } from '../dto/user.dto';
+import { UserDocument } from '../schemas/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<UserDocument>
-  ) { }
+    private userModel: Model<UserDocument>,
+  ) {}
 
   async createUser(user: UserInterface): Promise<UserInterface | null> {
     const createUser = new this.userModel(user);
@@ -71,7 +71,6 @@ export class UserRepository {
   //         }
   //     });
 
-
   //     if (data['name']) {
   //         matchCondition.push({fullName: { $regex: new RegExp(data['name'], 'i') }})
   //     }
@@ -95,7 +94,9 @@ export class UserRepository {
   // }
 
   convertToCoreUserList(users: UserDocument[]): UserInterface[] {
-    return users.map(user => this.convertToCoreUser(user)).filter(coreUser => coreUser !== null);
+    return users
+      .map((user) => this.convertToCoreUser(user))
+      .filter((coreUser) => coreUser !== null);
   }
 
   convertToCoreUser(user: UserDocument | null): UserInterface | null {
@@ -103,7 +104,7 @@ export class UserRepository {
 
     const coreUser = new User();
 
-    Object.keys(user['_doc'] || user).forEach(key => {
+    Object.keys(user['_doc'] || user).forEach((key) => {
       if (key === '__v') return;
 
       if (key === '_id') coreUser.id = user['_id'];

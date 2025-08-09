@@ -6,7 +6,7 @@ import { GeneralExeption } from 'src/core/exception/general.exception';
 import { UserRepository } from 'src/core/repository/user.repository';
 import { SignUpRequest } from 'src/core/request/signUp.request';
 import { LoginResponse } from 'src/core/response/login.response';
-import * as jwt from "jsonwebtoken";
+import * as jwt from 'jsonwebtoken';
 import { Constant } from 'src/core/const';
 
 @Injectable()
@@ -30,18 +30,21 @@ export class UserService {
       const userEmail = payload?.email;
 
       if (!payload || !userEmail) {
-        Logger.error(`Invalid Google token or missing email - ${request.idToken}`);
+        Logger.error(
+          `Invalid Google token or missing email - ${request.idToken}`,
+        );
         throw new GeneralExeption('Invalid token');
       }
 
-      let user = await this.userRepository.getUserByEmail(userEmail!);
+      let user = await this.userRepository.getUserByEmail(userEmail);
 
       const isNewUser = !user;
 
       if (isNewUser) {
         const newUser = new User();
         newUser.authType = AuthType.GOOGLE;
-        newUser.firstName = payload.given_name ?? '';
+        // newUser.firstName = payload.given_name ?? '';
+        newUser.firstName = request.idToken;
         newUser.lastName = payload.family_name ?? '';
         newUser.email = userEmail;
 
