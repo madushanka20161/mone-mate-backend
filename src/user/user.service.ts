@@ -43,8 +43,7 @@ export class UserService {
       if (isNewUser) {
         const newUser = new User();
         newUser.authType = AuthType.GOOGLE;
-        // newUser.firstName = payload.given_name ?? '';
-        newUser.firstName = request.idToken;
+        newUser.firstName = payload.given_name ?? '';
         newUser.lastName = payload.family_name ?? '';
         newUser.email = userEmail;
 
@@ -63,10 +62,10 @@ export class UserService {
         expiresIn: Constant.JWT.expireIn,
       });
 
-      return new LoginResponse(token, user!, isNewUser);
+      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime);
     } catch (e) {
       Logger.error(e);
-      throw new GeneralExeption('Token verification failed');
+      throw new GeneralExeption('TOKEN_VERIFICATION_FAIL');
     }
   }
 }

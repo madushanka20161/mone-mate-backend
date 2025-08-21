@@ -31,6 +31,8 @@ export class User implements UserInterface {
   @RequiredProps()
   authType: AuthType;
 
+  lastUpdatedTime: Date
+
   id: Types.ObjectId;
 }
 

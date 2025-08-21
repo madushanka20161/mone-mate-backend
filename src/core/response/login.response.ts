@@ -9,7 +9,8 @@ export class LoginResponse implements CoreResponse {
     token: string,
     user: UserInterface,
     isNewUser: boolean,
-    ads?: { isAdsEnable: boolean; remaingCount: number },
+    lastUpdatedTime: Date,
+    ads?: { isAdsEnable: boolean; remaingCount: number }
   ) {
     this.token = token;
     this.statusCode = HttpStatus.OK;
@@ -18,6 +19,7 @@ export class LoginResponse implements CoreResponse {
       remaingCount: ads?.remaingCount ?? Constant.ads.requestCount,
       isAdsEnable: ads?.isAdsEnable ?? Constant.ads.isEnable,
     };
+    this.lastUpdatedTime = lastUpdatedTime;
 
     loginUserField.forEach((key) => {
       this.user[key] = user[key];
@@ -32,4 +34,5 @@ export class LoginResponse implements CoreResponse {
     isAdsEnable: boolean;
     remaingCount: number;
   };
+  lastUpdatedTime: Date;
 }

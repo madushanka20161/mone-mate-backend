@@ -9,6 +9,7 @@ export interface UserInterface {
   createDate: Date;
   lastLogin: Date;
   authType: AuthType;
+  lastUpdatedTime: Date;
 }
 
 export class User implements UserInterface {
@@ -19,4 +20,5 @@ export class User implements UserInterface {
   createDate: Date;
   lastLogin: Date;
   authType: AuthType;
+  lastUpdatedTime: Date;
 }
