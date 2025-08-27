@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { AuthType } from '../enum/authType.enum';
+import { UserRecode } from './userRecode.dto';
 
 export interface UserInterface {
   id: Types.ObjectId;
@@ -10,6 +11,7 @@ export interface UserInterface {
   lastLogin: Date;
   authType: AuthType;
   lastUpdatedTime: Date;
+  recodes: UserRecode;
 }
 
 export class User implements UserInterface {
@@ -21,4 +23,5 @@ export class User implements UserInterface {
   lastLogin: Date;
   authType: AuthType;
   lastUpdatedTime: Date;
+  recodes: UserRecode;
 }

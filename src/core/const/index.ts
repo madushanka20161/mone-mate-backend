@@ -7,6 +7,7 @@ export const Constant = {
   ads: {
     requestCount: 10,
     isEnable: true,
+    isAdsReqEnable: true,
   },
   googleClientId:
     '581198894251-cc8a2924047shafk33gt5qe14u7bh22g.apps.googleusercontent.com',

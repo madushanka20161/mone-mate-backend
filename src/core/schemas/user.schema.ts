@@ -4,6 +4,7 @@ import { UserInterface } from '../dto/user.dto';
 import moment from 'moment';
 import { DefaultProp, RequiredProps, UniqueProp } from '../helpers';
 import { AuthType } from '../enum/authType.enum';
+import { UserRecode } from '../dto/userRecode.dto';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -31,7 +32,11 @@ export class User implements UserInterface {
   @RequiredProps()
   authType: AuthType;
 
-  lastUpdatedTime: Date
+  @Prop({ type: Date })
+  lastUpdatedTime: Date;
+
+  @Prop({ type: UserRecode })
+  recodes: UserRecode;
 
   id: Types.ObjectId;
 }

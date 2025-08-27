@@ -8,6 +8,8 @@ import { SignUpRequest } from 'src/core/request/signUp.request';
 import { LoginResponse } from 'src/core/response/login.response';
 import * as jwt from 'jsonwebtoken';
 import { Constant } from 'src/core/const';
+import { UpdateUserRecodeRequest } from 'src/core/request/updateUserRecode.request';
+import { GeneralResponse } from 'src/core/response/general.response';
 
 @Injectable()
 export class UserService {
@@ -62,10 +64,44 @@ export class UserService {
         expiresIn: Constant.JWT.expireIn,
       });
 
-      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime);
+      const isAdsEnable = this._isAdsEnable(user?.createDate);
+
+      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime, { isAdsEnable });
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e.message);
       throw new GeneralExeption('TOKEN_VERIFICATION_FAIL');
+    }
+  }
+
+  async updateUserRecode(email: string, recods: UpdateUserRecodeRequest) {
+    const user = await this.userRepository.getUserByEmail(email);
+    
+    if (!user) {
+      Logger.error(`update recode issue - cannot find auth user: ${email}`);
+      throw new GeneralExeption('INVALID_AUTH_USER');
+    }
+
+    user.recodes = recods;
+    user.lastUpdatedTime = new Date();
+    
+    const isUpdated = await this.userRepository.updateUser(user);
+    
+    if (!isUpdated) Logger.error(`update recode issue - size of recodes: ${(JSON.stringify(recods).length/(1024*1024)).toFixed(2)}MB`);
+
+    return new GeneralResponse();
+  }
+
+  _isAdsEnable = (createdDate: Date | undefined): boolean => {
+    if (createdDate === undefined) return false;
+
+    const today = new Date();
+    const diffMs = today.getTime() - createdDate.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    if (diffDays > 30) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

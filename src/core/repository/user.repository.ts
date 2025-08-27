@@ -20,16 +20,18 @@ export class UserRepository {
 
   async updateUser(user: UserInterface): Promise<boolean> {
     try {
-      await this.userModel.updateOne(
+      const updateDetails = await this.userModel.updateOne(
         { email: user.email },
         {
           $set: {
             lastLogin: user.lastLogin,
+            lastUpdatedTime: user.lastUpdatedTime,
+            recodes: user.recodes
           },
         },
       );
 
-      return true;
+      return updateDetails.modifiedCount > 0;
     } catch (error) {
       Logger.error('update user error', error.message);
 

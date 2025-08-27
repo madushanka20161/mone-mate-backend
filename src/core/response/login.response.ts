@@ -10,7 +10,7 @@ export class LoginResponse implements CoreResponse {
     user: UserInterface,
     isNewUser: boolean,
     lastUpdatedTime: Date,
-    ads?: { isAdsEnable: boolean; remaingCount: number }
+    ads?: { isAdsEnable?: boolean; isAdsReqEnable?: boolean; remaingCount?: number; }
   ) {
     this.token = token;
     this.statusCode = HttpStatus.OK;
@@ -18,6 +18,7 @@ export class LoginResponse implements CoreResponse {
     this.ads = {
       remaingCount: ads?.remaingCount ?? Constant.ads.requestCount,
       isAdsEnable: ads?.isAdsEnable ?? Constant.ads.isEnable,
+      isAdsReqEnable: ads?.isAdsReqEnable ?? Constant.ads.isAdsReqEnable,
     };
     this.lastUpdatedTime = lastUpdatedTime;
 
@@ -33,6 +34,7 @@ export class LoginResponse implements CoreResponse {
   ads: {
     isAdsEnable: boolean;
     remaingCount: number;
+    isAdsReqEnable: boolean;
   };
   lastUpdatedTime: Date;
 }
