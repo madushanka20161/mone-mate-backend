@@ -104,4 +104,15 @@ export class UserService {
       return false;
     }
   }
+
+  async getAuthUser(email: string): Promise<User> {
+    const user = await this.userRepository.getUserByEmail(email);
+    
+    if (!user) {
+      Logger.error(`update recode issue - cannot find auth user: ${email}`);
+      throw new GeneralExeption('INVALID_AUTH_USER');
+    }
+
+    return user;
+  }
 }

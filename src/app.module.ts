@@ -7,12 +7,15 @@ import { Constant } from './core/const';
 import { HelperModule } from './helper/helper.module';
 import { AuthenticationMiddleware } from './core/middleware/authentication.middleware';
 import { UserController } from './user/user.controller';
+import { AdsModule } from './ads/ads.module';
+import { AdsController } from './ads/ads.controller';
 
 @Module({
   imports: [
     MongooseModule.forRoot(Constant.mongodbURL), 
     UserModule,
     HelperModule,
+    AdsModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -30,7 +33,7 @@ export class AppModule implements NestModule {
         { path: 'user', method: RequestMethod.POST },
         // { path: 'user/login', method: RequestMethod.POST },
       )
-      .forRoutes(UserController);
+      .forRoutes(UserController, AdsController);
   }
 }
 
