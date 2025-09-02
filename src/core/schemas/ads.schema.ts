@@ -3,6 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { AdsType } from '../enum/adsType.enum';
 import { AdsInterface } from '../dto/ads.dto';
 import { AdsHistoryInterface } from '../dto/adsHistory.dto';
+import { DefaultProp } from '../helpers';
 
 export type AdsDocument = HydratedDocument<Ads>;
 
@@ -22,6 +23,9 @@ export class Ads implements AdsInterface {
   @Prop({ default: 0 })
   remainingCount: number;
 
+  @DefaultProp(new Date())
+  remainingCountUpdatedAt: Date;
+
   @Prop({ default: true })
   isAdsEnable: boolean;
 
@@ -35,8 +39,8 @@ export class Ads implements AdsInterface {
     type: [String],
     default: [],
     set: (errors: string[]) => {
-      if (errors.length > 20) {
-        return errors.slice(errors.length - 20);
+      if (errors.length > 50) {
+        return errors.slice(errors.length - 50);
       }
       return errors;
     },

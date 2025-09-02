@@ -17,6 +17,7 @@ export class AdsService {
     const ads: Partial<Ads> = {
       userId: user.id,
       remainingCount: count,
+      remainingCountUpdatedAt: new Date(),
     }
 
     const isUpdated = await this.adsRepository.updateAds(ads);

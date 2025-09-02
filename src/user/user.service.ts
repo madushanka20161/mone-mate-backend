@@ -10,13 +10,18 @@ import * as jwt from 'jsonwebtoken';
 import { Constant } from 'src/core/const';
 import { UpdateUserRecodeRequest } from 'src/core/request/updateUserRecode.request';
 import { GeneralResponse } from 'src/core/response/general.response';
+import { Ads } from 'src/core/dto/ads.dto';
+import { AdsRepository } from 'src/core/repository/ads.repository';
 
 @Injectable()
 export class UserService {
   private oauthClient: OAuth2Client;
   private CLIENT_ID: string;
 
-  constructor(private userRepository: UserRepository) {
+  constructor(
+    private userRepository: UserRepository,
+    private adsRepository: AdsRepository,
+  ) {
     this.CLIENT_ID = Constant.googleClientId;
     this.oauthClient = new OAuth2Client(this.CLIENT_ID);
   }
@@ -64,9 +69,13 @@ export class UserService {
         expiresIn: Constant.JWT.expireIn,
       });
 
-      const isAdsEnable = this._isAdsEnable(user?.createDate);
+      const ads = await this.adsRepository.getAdsByUserId(user!.id.toString());
 
-      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime, { isAdsEnable });
+      const isAdsEnable = this._isAdsEnable(user?.createDate, ads!);
+      const remaingCount = this._adsRemaingCount(ads!);
+      const isAdsReqEnable = ads?.isAdsReqEnable ?? true;
+
+      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime, { isAdsEnable, remaingCount, isAdsReqEnable });
     } catch (e) {
       Logger.error(e.message);
       throw new GeneralExeption('TOKEN_VERIFICATION_FAIL');
@@ -91,8 +100,33 @@ export class UserService {
     return new GeneralResponse();
   }
 
-  _isAdsEnable = (createdDate: Date | undefined): boolean => {
-    if (createdDate === undefined) return false;
+  _adsRemaingCount = (ads: Ads | undefined) : number => {
+    const requestCount = Constant.ads.requestCount;
+
+    if (!ads) return requestCount;
+
+    if (ads.remainingCount === requestCount) return requestCount;
+
+    const lastUpdated = new Date(ads?.remainingCountUpdatedAt);
+    const now = new Date();
+
+    /* TODO: [need to compire performance and use suitable one]
+    const isSameDay = lastUpdated.getUTCFullYear() === now.getUTCFullYear() && lastUpdated.getUTCMonth() === now.getUTCMonth() && lastUpdated.getUTCDate() === now.getUTCDate();
+    */
+    if (lastUpdated.toISOString().split("T")[0] !== now.toISOString().split("T")[0]) return ads.remainingCount;
+
+    ads.remainingCount = requestCount;
+
+    // TODO: [Need to test whethere we need to update the count or not]
+    // this.adsRepository.updateAds(ads);
+
+    return requestCount;
+  }
+
+  _isAdsEnable = (createdDate: Date | undefined, ads: Ads | undefined): boolean => {
+    if (createdDate === undefined) return true;
+
+    if (ads && !ads.isAdsEnable) return ads.isAdsEnable;
 
     const today = new Date();
     const diffMs = today.getTime() - createdDate.getTime();
