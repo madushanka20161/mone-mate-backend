@@ -60,6 +60,21 @@ export class UserService {
           Logger.error(`Failed to create user - ${userEmail}`);
           throw new GeneralExeption('User creation failed');
         }
+
+        const ads: Partial<Ads> = {
+          remainingCount: Constant.ads.requestCount,
+          remainingCountUpdatedAt: new Date(),
+          userId: user.id
+        }
+
+        const newAds = this.adsRepository.updateAds(ads);
+
+        if (!newAds) {
+          if (!user) {
+            Logger.error(`Failed to create ads - ${userEmail}`);
+            throw new GeneralExeption('User creation failed');
+          }
+        }
       } else {
         user!.lastLogin = new Date();
         await this.userRepository.updateUser(user!);
@@ -113,7 +128,7 @@ export class UserService {
     /* TODO: [need to compire performance and use suitable one]
     const isSameDay = lastUpdated.getUTCFullYear() === now.getUTCFullYear() && lastUpdated.getUTCMonth() === now.getUTCMonth() && lastUpdated.getUTCDate() === now.getUTCDate();
     */
-    if (lastUpdated.toISOString().split("T")[0] !== now.toISOString().split("T")[0]) return ads.remainingCount;
+    if (lastUpdated.toISOString().split("T")[0] === now.toISOString().split("T")[0]) return ads.remainingCount;
 
     ads.remainingCount = requestCount;
 
