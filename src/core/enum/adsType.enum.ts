@@ -1,4 +1,5 @@
 export enum AdsType {
   // 'banner' | 'interstitial' | 'rewarded'
-  INTERSTITIAL = 'interstitial'
+  INTERSTITIAL = 'interstitial',
+  INTERSTITIALNOT = 'interstitial-not'
 }
