@@ -25,6 +25,7 @@ export class AdsService {
     }
 
     ads.remainingCount = count;
+    ads.remainingCountUpdatedAt = new Date();
 
     const isUpdated = await this.adsRepository.updateAds(ads);
 
@@ -44,6 +45,7 @@ export class AdsService {
 
     ads.errors.push(...data.errors);
     ads.remainingCount = data.remainingCount ?? ads.remainingCount;
+    ads.remainingCountUpdatedAt = new Date();
 
     const isUpdated = await this.adsRepository.updateAds(ads);
 
@@ -68,6 +70,7 @@ export class AdsService {
 
     ads.history.push(adsHistory);
     ads.remainingCount = data.remainingCount ?? ads.remainingCount;
+    ads.remainingCountUpdatedAt = new Date();
 
     const isUpdated = await this.adsRepository.updateAds(ads);
 

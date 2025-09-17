@@ -11,6 +11,10 @@ export const Constant = {
   },
   googleClientId:
     '581198894251-cc8a2924047shafk33gt5qe14u7bh22g.apps.googleusercontent.com',
+  // PROD
+  // mongodbURL:
+  //   'mongodb+srv://pasanmalinda10:pasanmalinda10@cluster0.qxirnkc.mongodb.net/money-mate?retryWrites=true&w=majority&appName=Cluster0',
+  // DEV
   mongodbURL:
     'mongodb+srv://pasanmalinda10:pasanmalinda10@cluster0.qxirnkc.mongodb.net/money-mate-dev?retryWrites=true&w=majority&appName=Cluster0',
 };
