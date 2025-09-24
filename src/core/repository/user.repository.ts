@@ -49,6 +49,85 @@ export class UserRepository {
     return this.convertToCoreUser(users);
   }
 
+  async getAdminDetails() {
+    const [row] = await this.userModel.aggregate([
+      {
+        $set: {
+          startToday: { $dateTrunc: { date: '$$NOW', unit: 'day' } },
+          startWeek: { $dateTrunc: { date: '$$NOW', unit: 'week' } },
+          startMonth: { $dateTrunc: { date: '$$NOW', unit: 'month' } },
+          startYear: { $dateTrunc: { date: '$$NOW', unit: 'year' } }
+        }
+      },
+      {
+        $set: {
+          startYesterday: { $dateAdd: { startDate: '$startToday', unit: 'day', amount: -1 } },
+          startTomorrow: { $dateAdd: { startDate: '$startToday', unit: 'day', amount: 1 } },
+          nextWeek: { $dateAdd: { startDate: '$startWeek', unit: 'week', amount: 1 } },
+          nextMonth: { $dateAdd: { startDate: '$startMonth', unit: 'month', amount: 1 } },
+          nextYear: { $dateAdd: { startDate: '$startYear', unit: 'year', amount: 1 } } // ← added
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          newUsersToday: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$createDate', '$startToday'] }, { $lt: ['$createDate', '$startTomorrow'] }] },
+                1, 0
+              ]
+            }
+          },
+          active1d: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$lastLogin', '$startToday'] }, { $lt: ['$lastLogin', '$startTomorrow'] }] },
+                1, 0
+              ]
+            }
+          },
+          active2d: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$lastLogin', '$startYesterday'] }, { $lt: ['$lastLogin', '$startTomorrow'] }] },
+                1, 0
+              ]
+            }
+          },
+          activeWeek: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$lastLogin', '$startWeek'] }, { $lt: ['$lastLogin', '$nextWeek'] }] },
+                1, 0
+              ]
+            }
+          },
+          activeMonth: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$lastLogin', '$startMonth'] }, { $lt: ['$lastLogin', '$nextMonth'] }] },
+                1, 0
+              ]
+            }
+          },
+          activeYear: {
+            $sum: {
+              $cond: [
+                { $and: [{ $gte: ['$lastLogin', '$startYear'] }, { $lt: ['$lastLogin', '$nextYear'] }] },
+                1, 0
+              ]
+            }
+          }
+        }
+      },
+      { $project: { _id: 0 } }
+    ]).exec();
+    
+
+    return row ?? { newUsersToday: 0, active1d: 0, active2d: 0, activeWeek: 0, activeMonth: 0 };
+  }
+
   // async getUserById(id: string): Promise<UserInterface> {
   //     const user = await this.userModel.findById(id);
 

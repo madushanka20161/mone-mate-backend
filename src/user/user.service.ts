@@ -115,6 +115,10 @@ export class UserService {
     return new GeneralResponse();
   }
 
+  async getAdminDetails() {
+    return await this.userRepository.getAdminDetails();
+  }
+
   _adsRemaingCount = (ads: Ads | undefined) : number => {
     const requestCount = Constant.ads.requestCount;
 

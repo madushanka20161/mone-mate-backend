@@ -13,7 +13,7 @@ export class User implements UserInterface {
   @RequiredProps()
   firstName: string;
 
-  @RequiredProps()
+  // @RequiredProps()
   lastName: string;
 
   @RequiredProps()

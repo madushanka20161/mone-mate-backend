@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Logger,
@@ -50,6 +51,24 @@ export class UserController {
 
     try {
       return this.userService.updateUserRecode(request.authUser.email, body);
+    } catch (error) {
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      } else {
+        throw new HttpException(
+          'SERVER_ERROR',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Get('admin11')
+  async getAdminDetails() {
+    Logger.log(`admin details`);
+
+    try {
+      return this.userService.getAdminDetails();
     } catch (error) {
       if (error.status) {
         throw new HttpException(error.message, error.status);
