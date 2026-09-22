@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // import { NestFactory } from '@nestjs/core';
 // import { AppModule } from './app.module';
 
@@ -9,7 +7,6 @@
 //   await app.listen(process.env.PORT ?? 3000);
 // }
 // bootstrap();
->>>>>>> 5519780 (add ads related config to login response)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
