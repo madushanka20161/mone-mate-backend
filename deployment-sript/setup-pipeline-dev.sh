@@ -17,7 +17,7 @@ TAGS="Key=Project,Value=${PROJECT_TAG} Key=Environment,Value=${ENVIRONMENT_TAG} 
 # ------------------------------
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-ARTIFACT_BUCKET="${APP_NAME}-pipeline-artifacts-${ACCOUNT_ID}-${AWS_REGION}"
+ARTIFACT_BUCKET="${APP_NAME}-${ACCOUNT_ID}-${AWS_REGION}"
 
 echo "==> Starting application deployment to Elastic Beanstalk..."
 echo "==> Account: ${ACCOUNT_ID}, Region: ${AWS_REGION}"
@@ -187,8 +187,7 @@ if ! aws iam get-role --role-name "${PIPELINE_ROLE}" >/dev/null 2>&1; then
     --assume-role-policy-document '{
       "Version": "2012-10-17",
       "Statement": [{"Effect": "Allow", "Principal": {"Service": "codepipeline.amazonaws.com"}, "Action": "sts:AssumeRole"}]
-    }' \
-    --tags "${TAGS}"
+    }'
   aws iam put-role-policy --role-name "${PIPELINE_ROLE}" --policy-name "codepipeline-inline-policy" --policy-document "{
     \"Version\": \"2012-10-17\",
     \"Statement\": [
