@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "money-manager-18108",
+    "prod": "money-manager-18108",
+    "dev": "money-manager-dev-33e62"
+  },
+  "targets": {},
+  "etags": {}
+}
