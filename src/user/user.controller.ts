@@ -15,12 +15,13 @@ import { GeneralExeption } from 'src/core/exception/general.exception';
 import { BadRequestException } from 'src/core/exception/badRequest.exception';
 import type { UpdateUserRecodeRequest } from 'src/core/request/updateUserRecode.request';
 import type { CoreRequest } from 'src/core/request/core.request';
+import type { VerifyToken } from 'src/core/request/verifyToken.request';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('signup')
   async signIn(@Body() request: SignUpRequest) {
     Logger.log(`signin - authType: ${request.authType}, email: ${request.email}`);
     if (request === undefined) throw new BadRequestException('');
@@ -31,6 +32,27 @@ export class UserController {
       } else {
         throw new GeneralExeption(`invalid auth type ${request.authType}`);
       }
+    } catch (error) {
+      Logger.error(error.message);
+      
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      } else {
+        throw new HttpException(
+          'SERVER_ERROR',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Get('verify-token')
+  async verifyToken(@Body() request: VerifyToken) {
+    Logger.log(`verify token - token: ${request.token}`);
+    if (request === undefined) throw new BadRequestException('');
+
+    try {
+      return await this.userService.verifyToken(request.token);
     } catch (error) {
       Logger.error(error.message);
       

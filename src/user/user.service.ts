@@ -84,13 +84,35 @@ export class UserService {
         expiresIn: Constant.JWT.expireIn,
       });
 
-      const ads = await this.adsRepository.getAdsByUserId(user!.id.toString());
+      const adsstatus = await this._getAdsStatus(user!);
 
-      const isAdsEnable = this._isAdsEnable(user?.createDate, ads!);
-      const remaingCount = this._adsRemaingCount(ads!);
-      const isAdsReqEnable = ads?.isAdsReqEnable ?? true;
+      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime, adsstatus);
+    } catch (e) {
+      Logger.error(e.message);
+      throw new GeneralExeption('SIGIN_WITH_GOOGLE_FAIL');
+    }
+  }
 
-      return new LoginResponse(token, user!, isNewUser, user!.lastUpdatedTime, { isAdsEnable, remaingCount, isAdsReqEnable });
+
+  async verifyToken(token: string) {
+    try {
+      const decoded = jwt.verify(
+        token,
+        Constant.JWT.secret
+      );
+
+      const userEmail = decoded['email'];
+
+      const newToken = jwt.sign({ email: userEmail}, Constant.JWT.secret, {
+        expiresIn: Constant.JWT.expireIn,
+      });
+
+      let user = await this.userRepository.getUserByEmail(userEmail);
+      user!.lastLogin = new Date();
+      await this.userRepository.updateUser(user!);
+      const adsstatus = await this._getAdsStatus(user!);
+
+      return new LoginResponse(newToken, user!, false, user!.lastUpdatedTime, adsstatus);
     } catch (e) {
       Logger.error(e.message);
       throw new GeneralExeption('TOKEN_VERIFICATION_FAIL');
@@ -156,6 +178,20 @@ export class UserService {
     } else {
       return false;
     }
+  }
+
+  async _getAdsStatus(user: User) : Promise<{isAdsEnable: boolean; remainingCount: number; isAdsReqEnable: boolean;}> {
+    const ads = await this.adsRepository.getAdsByUserId(user!.id.toString());
+
+    const isAdsEnable = this._isAdsEnable(user?.createDate, ads!);
+    const remainingCount = this._adsRemaingCount(ads!);
+    const isAdsReqEnable = ads?.isAdsReqEnable ?? true; 
+
+    return {
+      isAdsEnable,
+      remainingCount,
+      isAdsReqEnable,
+    };
   }
 
   async getAuthUser(email: string): Promise<User> {
