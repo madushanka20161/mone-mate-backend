@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   Logger,
@@ -15,7 +16,6 @@ import { GeneralExeption } from 'src/core/exception/general.exception';
 import { BadRequestException } from 'src/core/exception/badRequest.exception';
 import type { UpdateUserRecodeRequest } from 'src/core/request/updateUserRecode.request';
 import type { CoreRequest } from 'src/core/request/core.request';
-import type { VerifyToken } from 'src/core/request/verifyToken.request';
 
 @Controller('user')
 export class UserController {
@@ -47,12 +47,17 @@ export class UserController {
   }
 
   @Get('verify-token')
-  async verifyToken(@Body() request: VerifyToken) {
-    Logger.log(`verify token - token: ${request.token}`);
-    if (request === undefined) throw new BadRequestException('');
+  async verifyToken(@Headers('authorization') authorization: string,) {
+    const token = authorization?.startsWith('Bearer ') && authorization.substring(7);;
+
+    Logger.log(`verify token - token: ${authorization}`);
+
+    if (!token) {
+      throw new HttpException('Token is required', HttpStatus.UNAUTHORIZED);
+    }
 
     try {
-      return await this.userService.verifyToken(request.token);
+      return await this.userService.verifyToken(token);
     } catch (error) {
       Logger.error(error.message);
       
