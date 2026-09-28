@@ -112,6 +112,8 @@ export class UserService {
       await this.userRepository.updateUser(user!);
       const adsstatus = await this._getAdsStatus(user!);
 
+      Logger.log(`verify token request success`);
+
       return new LoginResponse(newToken, user!, false, user!.lastUpdatedTime, adsstatus);
     } catch (e) {
       Logger.error(e.message);
