@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { User } from 'src/core/dto/user.dto';
 import { AuthType } from 'src/core/enum/authType.enum';
@@ -117,7 +117,14 @@ export class UserService {
       return new LoginResponse(newToken, user!, false, user!.lastUpdatedTime, adsstatus);
     } catch (e) {
       Logger.error(e.message);
-      throw new GeneralExeption('TOKEN_VERIFICATION_FAIL');
+
+      if (e instanceof jwt.TokenExpiredError) {
+        throw new GeneralExeption('TOKEN_VERIFICATION_FAIL_EXPIRED', HttpStatus.UNAUTHORIZED);
+      } else if (e instanceof jwt.JsonWebTokenError) {
+        throw new GeneralExeption('TOKEN_VERIFICATION_FAIL_INVALID', HttpStatus.UNAUTHORIZED);
+      }
+      
+      throw new GeneralExeption('TOKEN_VERIFICATION_FAIL', HttpStatus.UNAUTHORIZED);
     }
   }
 
